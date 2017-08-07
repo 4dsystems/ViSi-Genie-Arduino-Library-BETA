@@ -6,13 +6,13 @@
 Arduino Library for 4D Systems ViSi-Genie Environment
 
 This library is an updated version of the original genieArduino library https://github.com/4dsystems/ViSi-Genie-Arduino-Library
-and includes additional enhancements and funcationality.
+and includes additional enhancements and functionality.
 
 ## Information
 
 This library provides high level functions for the Arduino, to ease communication with 4D Systems modules when using the module configured with ViSi-Genie.
 Workshop4 PRO adds additional features to ViSi-Genie, allowing the User to write 4DGL code which can be executed at will from ViSi-Genie, enabling many advanced features not previously possible, as well as the Smart Widgets Editor for creating your own gauges, sliders, knobs etc.
-Please refer to the 4D Systems website, namingly the Workshop 4 Product Page, for documentation regarding Workshop 4, and its environments.
+Please refer to the 4D Systems website, specifically the Workshop 4 Product Page, for documentation regarding Workshop 4, and its environments.
 [4D Systems website, Workshop4 Product Page](http://www.4dsystems.com.au/product/4D-Workshop-4-IDE)
 
 ## Installation
@@ -31,7 +31,7 @@ Inside the library are example sketches, to assist with getting started using th
 
 ## Tested with
 
-This library has been tested on the Duemilanove, Uno, Mega 1280, Mega 2560, Leonardo, Chipkit Max32, Due, Intel Galileo, Teensy and Yun (Software Serial only on Yun). 
+This BETA library has been tested on the Duemilanove, Uno, Mega 1280, Mega 2560, Leonardo, and Teensy. 
 Any problems discovered with this library, please contact technical support so fixes can be put in place, or seek support from our forum.
 
 ## Compatible 4D Systems Display Modules
