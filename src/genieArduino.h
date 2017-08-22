@@ -1,11 +1,12 @@
-/////////////////////// GenieArduino 08/04/2017 ///////////////////////
+/////////////////////// GenieArduino 08/22/2017 ///////////////////////
 //
 //      Library to utilize the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
-//		  Antonio Brewer & 4D Systems Engineering, March 2017, www.4dsystems.com.au
+//        4D Systems Engineering, August 2017, www.4dsystems.com.au
+//		  	Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
 //        4D Systems Engineering, October 2015, www.4dsystems.com.au
 //        4D Systems Engineering, September 2015, www.4dsystems.com.au
 //        4D Systems Engineering, August 2015, www.4dsystems.com.au
@@ -58,7 +59,7 @@
 #ifndef genieArduino_h
 #define genieArduino_h
 
-#define GENIE_VERSION    "GenieArduino 08-04-2017"
+#define GENIE_VERSION    "GenieArduino 08-22-2017"   // MM-DD-YYYY
 
 // Genie commands & replys:
 
@@ -227,8 +228,8 @@ public:
 
     // Genie Magic functions (ViSi-Genie Pro Only)
 
-    uint8_t    WriteMagicBytes     (uint8_t index, uint8_t *bytes, uint8_t len, bool report = 0);
-    uint8_t    WriteMagicDBytes    (uint8_t index, uint16_t *bytes, uint8_t len, bool report = 0);
+    uint8_t    WriteMagicBytes     (uint8_t index, uint8_t *bytes, uint8_t len, uint8_t report = 0);
+    uint8_t    WriteMagicDBytes    (uint8_t index, uint16_t *bytes, uint8_t len, uint8_t report = 0);
     uint8_t    GetNextByte         (void);
     uint16_t   GetNextDoubleByte   (void);
 

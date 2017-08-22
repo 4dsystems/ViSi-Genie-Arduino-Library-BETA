@@ -1,11 +1,12 @@
-/////////////////////// GenieArduino 08/04/2017 ///////////////////////
+/////////////////////// GenieArduino 08/22/2017 ///////////////////////
 //
 //      Library to utilise the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
-//		  Antonio Brewer & 4D Systems Engineering, March 2017, www.4dsystems.com.au
+//        4D Systems Engineering, August 2017, www.4dsystems.com.au
+//		  	Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
 //        4D Systems Engineering, October 2015, www.4dsystems.com.au
 //        4D Systems Engineering, September 2015, www.4dsystems.com.au
 //        4D Systems Engineering, August 2015, www.4dsystems.com.au
@@ -882,7 +883,7 @@ uint8_t Genie::WriteStrU (uint8_t index, uint16_t *string) {
 // ## Write Magic Bytes #################
 // ######################################
 
-uint8_t Genie::WriteMagicBytes (uint8_t index, uint8_t *bytes, uint8_t len, bool report) {
+uint8_t Genie::WriteMagicBytes (uint8_t index, uint8_t *bytes, uint8_t len, uint8_t report) {
   if ( UserByteReader == NULL ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) debugSerial->println(F("*** Genie Enable AttachMagicByteReader !!! ***")); return -1; }
   if ( !displayDetected ) return -1;
   uint8_t checksum;
@@ -906,7 +907,7 @@ uint8_t Genie::WriteMagicBytes (uint8_t index, uint8_t *bytes, uint8_t len, bool
       if ( command_return == GENIE_ACK ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... ACK !")); } return 1; }
       if ( command_return == GENIE_NAK ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... NAK !")); } return 0; }
     } else {
-      if ( command_return == GENIEM_REPORT_BYTES || command_return == GENIEM_REPORT_DBYTES ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... OK  !")); } return 1; }
+      if ( command_return == report) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... OK  !")); } return 1; }
     }
   }
 
@@ -919,7 +920,7 @@ uint8_t Genie::WriteMagicBytes (uint8_t index, uint8_t *bytes, uint8_t len, bool
 // ## Write Magic Double Bytes ##########
 // ######################################
 
-uint8_t Genie::WriteMagicDBytes(uint8_t index, uint16_t *shorts, uint8_t len, bool report) {
+uint8_t Genie::WriteMagicDBytes(uint8_t index, uint16_t *shorts, uint8_t len, uint8_t report) {
   if ( UserDoubleByteReader == NULL ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) debugSerial->println(F("*** Genie Enable AttachMagicDoubleByteReader !!! ***")); return -1; }
   if ( !displayDetected ) return -1;
   uint8_t checksum;
@@ -947,7 +948,7 @@ uint8_t Genie::WriteMagicDBytes(uint8_t index, uint16_t *shorts, uint8_t len, bo
       if ( command_return == GENIE_ACK ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicDBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... ACK !")); } return 1; }
       if ( command_return == GENIE_NAK ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicDBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... NAK !")); } return 0; }
     } else {
-      if ( command_return == GENIEM_REPORT_BYTES || command_return == GENIEM_REPORT_DBYTES ) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicDBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... OK  !")); } return 1; }
+      if ( command_return == report) { if ( ( debug_level == 6 || debug_level == 5 ) && debugSerial != NULL ) { debugSerial->print(F("*** Genie WriteMagicDBytes *** --->")); debugSerial->print(index); debugSerial->println(F("... OK  !")); } return 1; }
     }
   }
 
