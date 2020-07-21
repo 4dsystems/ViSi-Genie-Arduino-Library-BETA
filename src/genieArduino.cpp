@@ -1,10 +1,11 @@
-/////////////////////// GenieArduino 08/22/2017 ///////////////////////
+/////////////////////// GenieArduino-BETA 21/07/2020 ///////////////////////
 //
 //      Library to utilise the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
+//        4D Systems Engineering, July 2020, www.4dsystems.com.au
 //        4D Systems Engineering, August 2017, www.4dsystems.com.au
 //		  	Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
 //        4D Systems Engineering, October 2015, www.4dsystems.com.au
@@ -23,7 +24,7 @@
 //      Based on code by
 //        Gordon Henderson, February 2013, <projects@drogon.net>
 //
-//      Copyright (c) 2012-2014 4D Systems Pty Ltd, Sydney, Australia
+//      Copyright (c) 2012-2020 4D Systems Pty Ltd, Sydney, Australia
 /*********************************************************************
  * This file is part of genieArduino:
  *    genieArduino is free software: you can redistribute it and/or modify
@@ -327,6 +328,36 @@ uint8_t Genie::WriteObject(uint8_t object, uint8_t index, uint16_t data) {
   return -1; // timeout
 }
 
+// ###############################################################
+// ## Write 16-bit data to Internal LedDigits ####################
+// ###############################################################
+uint8_t Genie::WriteIntLedDigits (uint16_t index, int16_t data) {
+    return WriteObject(GENIE_OBJ_ILED_DIGITS_L, index, data);
+}
+
+// ###############################################################
+// ## Write 32-bit float data to Internal LedDigits ##############
+// ###############################################################
+uint8_t Genie::WriteIntLedDigits (uint16_t index, float data) {
+    FloatLongFrame frame;
+    frame.floatValue = data;
+    uint8_t retval;
+    retval = WriteObject(GENIE_OBJ_ILED_DIGITS_H, index, frame.wordValue[1]);
+    if (retval != 1) return retval;
+    return WriteObject(GENIE_OBJ_ILED_DIGITS_L, index, frame.wordValue[0]);
+}
+
+// ###############################################################
+// ## Write 32-bit data to Internal LedDigits ####################
+// ###############################################################
+uint8_t Genie::WriteIntLedDigits (uint16_t index, int32_t data) {
+    FloatLongFrame frame;
+    frame.longValue = data;
+    uint8_t retval;
+    retval = WriteObject(GENIE_OBJ_ILED_DIGITS_H, index, frame.wordValue[1]);
+    if (retval != 1) return retval;
+    return WriteObject(GENIE_OBJ_ILED_DIGITS_L, index, frame.wordValue[0]);
+}
 
 
 // ######################################

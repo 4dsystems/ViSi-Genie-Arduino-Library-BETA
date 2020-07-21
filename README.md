@@ -6,7 +6,7 @@
 Arduino Library for 4D Systems ViSi-Genie Environment
 
 This library is an updated version of the original genieArduino library https://github.com/4dsystems/ViSi-Genie-Arduino-Library
-and includes additional enhancements and functionality.
+and includes additional enhancements and functionality, however should be classed as a BETA and be used at your own risk.
 
 ## Information
 
@@ -42,5 +42,4 @@ The demo included can easily be adapted to other size displays with a little edi
 ## Questions/Issues?
 
 Please sign up for our Forum and ask a question there, or submit a Tech Support Ticket from our website.
-Please do NOT post issues on Github, as this is not actively monitored. Please use one of the following:
-http://forum.4dsystems.com.au or http://www.4dsystems.com.au/support
+Please use one of the following: http://forum.4dsystems.com.au or http://www.4dsystems.com.au/support
