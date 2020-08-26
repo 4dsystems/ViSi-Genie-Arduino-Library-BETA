@@ -1,13 +1,14 @@
-/////////////////////// GenieArduino-BETA 21/07/2020 ///////////////////////
+/////////////////////// GenieArduino-BETA 26/08/2020 ///////////////////////
 //
 //      Library to utilise the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
+//        4D Systems Engineering, August 2020, www.4dsystems.com.au
 //        4D Systems Engineering, July 2020, www.4dsystems.com.au
 //        4D Systems Engineering, August 2017, www.4dsystems.com.au
-//		  	Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
+//		  Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
 //        4D Systems Engineering, October 2015, www.4dsystems.com.au
 //        4D Systems Engineering, September 2015, www.4dsystems.com.au
 //        4D Systems Engineering, August 2015, www.4dsystems.com.au
@@ -331,14 +332,14 @@ uint8_t Genie::WriteObject(uint8_t object, uint8_t index, uint16_t data) {
 // ###############################################################
 // ## Write 16-bit data to Internal LedDigits ####################
 // ###############################################################
-uint8_t Genie::WriteIntLedDigits (uint16_t index, int16_t data) {
+uint8_t Genie::WriteIntLedDigits (uint8_t index, int16_t data) {
     return WriteObject(GENIE_OBJ_ILED_DIGITS_L, index, data);
 }
 
 // ###############################################################
 // ## Write 32-bit float data to Internal LedDigits ##############
 // ###############################################################
-uint8_t Genie::WriteIntLedDigits (uint16_t index, float data) {
+uint8_t Genie::WriteIntLedDigits (uint8_t index, float data) {
     FloatLongFrame frame;
     frame.floatValue = data;
     uint8_t retval;
@@ -350,7 +351,7 @@ uint8_t Genie::WriteIntLedDigits (uint16_t index, float data) {
 // ###############################################################
 // ## Write 32-bit data to Internal LedDigits ####################
 // ###############################################################
-uint8_t Genie::WriteIntLedDigits (uint16_t index, int32_t data) {
+uint8_t Genie::WriteIntLedDigits (uint8_t index, int32_t data) {
     FloatLongFrame frame;
     frame.longValue = data;
     uint8_t retval;
@@ -908,7 +909,216 @@ uint8_t Genie::WriteStrU (uint8_t index, uint16_t *string) {
   return 1;
 }
 
+// ######################################
+// ## Write Strings #####################
+// ######################################
 
+uint8_t Genie::WriteInhLabel(uint8_t index) {
+    return WriteObject(GENIE_OBJ_ILABELB, index, -1);
+}
+
+uint8_t Genie::WriteInhLabel(uint8_t index, char *string) {
+  if ( !displayDetected ) return -1;
+  char *p;
+  uint8_t checksum;
+  pendingACK = 1;
+  int len = strlen(string);
+  if (len > 255) return -1;
+  deviceSerial->write(GENIE_WRITE_INH_LABEL);
+  checksum = GENIE_WRITE_INH_LABEL;
+  deviceSerial->write(index);
+  checksum ^= index;
+  deviceSerial->write((unsigned char)len);
+  checksum ^= len;
+  for (p = string ; *p ; ++p) {
+    deviceSerial->write(*p);
+    checksum ^= *p;
+  }
+  deviceSerial->write(checksum);
+  uint32_t timeout_write = millis();
+  while ( millis() - timeout_write <= GENIE_CMD_TIMEOUT ) {
+    uint8_t command_return = DoEvents();
+    if ( command_return == GENIE_ACK ) return 1;
+    if ( command_return == GENIE_NAK ) return 0;
+  }
+  return -1; // timeout
+}
+
+#ifdef AVR
+uint8_t Genie::WriteInhLabel(uint8_t index, const __FlashStringHelper *ifsh) {
+  PGM_P p = reinterpret_cast<PGM_P>(ifsh);
+  PGM_P p2 = reinterpret_cast<PGM_P>(ifsh);
+  size_t n = 0;
+  int len = 0;
+  while (1) {
+    unsigned char d = pgm_read_byte(p2++);
+    len++;
+    if (d == 0) break;
+  }
+  char arr[len];
+  int x = 0;
+  while (1) {
+    unsigned char c = pgm_read_byte(p++);
+    arr[x] = c;
+    x++;
+    if (c == 0) break;
+  }
+  WriteInhLabel(index, arr);
+  return 0;
+}
+#endif
+
+uint8_t Genie::WriteInhLabel(uint8_t index, const String &s) {
+  int len = s.length();
+  char arr[len + 1];
+  s.toCharArray(arr, len + 1);
+  WriteInhLabel(index, arr);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, long n) {
+  char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+  char *str = &buf[sizeof(buf) - 1];
+  long N = n;
+  n = abs(n);
+  *str = '\0';
+  do {
+    unsigned long m = n;
+    n /= 10;
+    char c = m - 10 * n;
+    *--str = c < 10 ? c + '0' : c + 'A' - 10;
+  } while (n);
+  if (N < 0) *--str = '-';
+  WriteInhLabel(index, str);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, long n, int base) {
+  char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+  char *str = &buf[sizeof(buf) - 1];
+  long N;
+  *str = '\0';
+  if (n >= 0) {
+    // prevent crash if called with base == 1
+    if (base < 2) base = 10;
+    if (base == 10) {
+      N = n;
+      n = abs(n);
+    }
+    do {
+      unsigned long m = n;
+      n /= base;
+      char c = m - base * n;
+      *--str = c < 10 ? c + '0' : c + 'A' - 10;
+    } while (n);
+    if (base == 10) if (N < 0) *--str = '-';
+  }
+  else if (n < 0) {
+    unsigned long n2 = (unsigned long)n;
+    uint8_t base2 = base;
+    do {
+      unsigned long m = n2;
+      n2 /= base2;
+      char c = m - base2 * n2;
+      *--str = c < 10 ? c + '0' : c + 'A' - 10;
+    } while (n2);
+  }
+  WriteInhLabel(index, str);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, int n) {
+  WriteInhLabel (index, (long) n);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, int n, int base) {
+  WriteInhLabel (index, (long) n, base);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, unsigned long n) {
+  char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+  char *str = &buf[sizeof(buf) - 1];
+//  long N = n; // unused?
+  n = abs(n);
+  *str = '\0';
+  do {
+    unsigned long m = n;
+    n /= 10;
+    char c = m - 10 * n;
+    *--str = c < 10 ? c + '0' : c + 'A' - 10;
+  } while (n);
+  WriteInhLabel(index, str);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, unsigned long n, int base) {
+  char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+  char *str = &buf[sizeof(buf) - 1];
+  *str = '\0';
+  // prevent crash if called with base == 1
+  if (base < 2) base = 10;
+  do {
+    unsigned long m = n;
+    n /= base;
+    char c = m - base * n;
+    *--str = c < 10 ? c + '0' : c + 'A' - 10;
+  } while (n);
+  WriteInhLabel(index, str);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, unsigned int n) {
+  WriteInhLabel (index, (unsigned long) n);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, unsigned n, int base) {
+  WriteInhLabel (index, (unsigned long) n, base);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, double number, int digits) {
+  char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
+  char *str = &buf[sizeof(buf) - 1];
+  *str = '\0';
+  double number2 = number;
+  if (number < 0.0) number = -number;
+  // Round correctly so that print(1.999, 2) prints as "2.00"
+  double rounding = 0.5;
+  for (int i = 0; i < digits; ++i) rounding /= 10.0;
+  number += rounding;
+  unsigned long int_part = (unsigned long)number;
+  double remainder = number - (double)int_part;
+  // Extract digits from the remainder one at a time
+  int digits2 = digits;
+  str = &buf[sizeof(buf) - 1 - digits2];
+  while (digits2-- > 0) {
+    remainder *= 10.0;
+    int toPrint = int(remainder);
+    char c = toPrint + 48;
+    *str++ = c;
+    remainder -= toPrint;
+  }
+  str = &buf[sizeof(buf) - 1 - digits];
+  if (digits > 0) *--str = '.';
+  // Extract the integer part of the number and print it
+  do {
+    unsigned long m = int_part;
+    int_part /= 10;
+    char c = m - 10 * int_part;
+    *--str = c < 10 ? c + '0' : c + 'A' - 10;
+  } while (int_part);
+  // Handle negative numbers
+  if (number2 < 0.0) *--str = '-';
+  WriteInhLabel(index, str);
+  return 0;
+}
+
+uint8_t Genie::WriteInhLabel (uint8_t index, double n) {
+  WriteInhLabel(index, n, 2);
+}
 
 // ######################################
 // ## Write Magic Bytes #################

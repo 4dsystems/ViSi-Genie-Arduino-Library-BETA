@@ -1,13 +1,14 @@
-/////////////////////// GenieArduino-BETA 21/07/2020 ///////////////////////
+/////////////////////// GenieArduino-BETA 26/08/2020 ///////////////////////
 //
 //      Library to utilize the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
+//        4D Systems Engineering, August 2020, www.4dsystems.com.au
 //        4D Systems Engineering, July 2020, www.4dsystems.com.au
 //        4D Systems Engineering, August 2017, www.4dsystems.com.au
-//		  	Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
+//		  Antonio Brewer & 4D Systems Engineering, July 2017, www.4dsystems.com.au
 //        4D Systems Engineering, October 2015, www.4dsystems.com.au
 //        4D Systems Engineering, September 2015, www.4dsystems.com.au
 //        4D Systems Engineering, August 2015, www.4dsystems.com.au
@@ -60,7 +61,7 @@
 #ifndef genieArduino_h
 #define genieArduino_h
 
-#define GENIE_VERSION    "v1.5.0-beta 21-07-2020"   // DD-MM-YYYY
+#define GENIE_VERSION    "v1.5.1-beta 26-08-2020"   // DD-MM-YYYY
 
 // Genie commands & replys:
 
@@ -81,6 +82,7 @@
 #define GENIEM_WRITE_DBYTES     9
 #define GENIEM_REPORT_BYTES     10
 #define GENIEM_REPORT_DBYTES    11
+#define GENIE_WRITE_INH_LABEL   12
 
 // Objects
 //    the manual says:
@@ -134,6 +136,7 @@
 #define GENIE_OBJ_IANGULAR_METER        39
 #define GENIE_OBJ_IGAUGE                40
 #define GENIE_OBJ_ILABEL                41
+#define GENIE_OBJ_ILABELB               41
 #define GENIE_OBJ_IUSER_GAUGE           42
 #define GENIE_OBJ_IMEDIA_GAUGE          43
 #define GENIE_OBJ_IMEDIA_THERMOMETER    44
@@ -243,26 +246,44 @@ public:
     uint8_t     timeout              (uint16_t value);
     uint8_t     ReadObject           (uint8_t object, uint8_t index);
     uint8_t     WriteObject          (uint8_t object, uint8_t index, uint16_t data);
-    uint16_t    WriteIntLedDigits    (uint16_t index, int16_t data);
-    uint16_t    WriteIntLedDigits    (uint16_t index, float data);
-    uint16_t    WriteIntLedDigits    (uint16_t index, int32_t data);
+    uint8_t     WriteIntLedDigits    (uint8_t index, int16_t data);
+    uint8_t     WriteIntLedDigits    (uint8_t index, float data);
+    uint8_t     WriteIntLedDigits    (uint8_t index, int32_t data);
     uint8_t     WriteContrast        (uint8_t value);
     uint8_t     WriteStr             (uint8_t index, char *string);
-	uint8_t	WriteStr			(uint8_t index, long n) ;
-	uint8_t	WriteStr			(uint8_t index, long n, int base) ;
-	uint8_t	WriteStr			(uint8_t index, unsigned long n) ;
-	uint8_t	WriteStr			(uint8_t index, unsigned long n, int base) ;
-	uint8_t	WriteStr			(uint8_t index, int n) ;
-	uint8_t	WriteStr			(uint8_t index, int n, int base) ;
-	uint8_t	WriteStr			(uint8_t index, unsigned int n) ;
-	uint8_t	WriteStr			(uint8_t index, unsigned int n, int base) ;
-	uint8_t	WriteStr			(uint8_t index, const String &s);
-#ifdef AVR
-	uint8_t	WriteStr			(uint8_t index, const __FlashStringHelper *ifsh);
-#endif
-	uint8_t	WriteStr			(uint8_t index, double n, int digits);
-	uint8_t	WriteStr			(uint8_t index, double n);	
-    uint8_t    WriteStrU             (uint8_t index, uint16_t *string);
+    uint8_t     WriteStr             (uint8_t index, long n) ;
+    uint8_t     WriteStr             (uint8_t index, long n, int base) ;
+    uint8_t     WriteStr             (uint8_t index, unsigned long n) ;
+    uint8_t     WriteStr             (uint8_t index, unsigned long n, int base) ;
+    uint8_t     WriteStr             (uint8_t index, int n) ;
+    uint8_t     WriteStr             (uint8_t index, int n, int base) ;
+    uint8_t     WriteStr             (uint8_t index, unsigned int n) ;
+    uint8_t     WriteStr             (uint8_t index, unsigned int n, int base) ;
+    uint8_t     WriteStr             (uint8_t index, const String &s);
+    #ifdef AVR
+    uint8_t     WriteStr             (uint8_t index, const __FlashStringHelper *ifsh);
+    #endif
+    uint8_t     WriteStr             (uint8_t index, double n, int digits);
+    uint8_t     WriteStr             (uint8_t index, double n);
+    uint8_t     WriteStrU            (uint8_t index, uint16_t *string);
+
+    uint8_t     WriteInhLabel        (uint8_t index);
+    uint8_t     WriteInhLabel        (uint8_t index, char *string);
+    uint8_t     WriteInhLabel        (uint8_t index, long n) ;
+    uint8_t     WriteInhLabel        (uint8_t index, long n, int base) ;
+    uint8_t     WriteInhLabel        (uint8_t index, unsigned long n) ;
+    uint8_t     WriteInhLabel        (uint8_t index, unsigned long n, int base) ;
+    uint8_t     WriteInhLabel        (uint8_t index, int n) ;
+    uint8_t     WriteInhLabel        (uint8_t index, int n, int base) ;
+    uint8_t     WriteInhLabel        (uint8_t index, unsigned int n) ;
+    uint8_t     WriteInhLabel        (uint8_t index, unsigned int n, int base) ;
+    uint8_t     WriteInhLabel        (uint8_t index, const String &s);
+    #ifdef AVR
+    uint8_t     WriteInhLabel        (uint8_t index, const __FlashStringHelper *ifsh);
+    #endif
+    uint8_t     WriteInhLabel        (uint8_t index, double n, int digits);
+    uint8_t     WriteInhLabel        (uint8_t index, double n);
+
     uint8_t     EventIs              (genieFrame * e, uint8_t cmd, uint8_t object, uint8_t index);
     uint16_t    GetEventData         (genieFrame * e);
     uint8_t     EnqueueEvent         (uint8_t * data);
