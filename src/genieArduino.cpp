@@ -1,10 +1,11 @@
-/////////////////////// GenieArduino-BETA 26/08/2020 ///////////////////////
+/////////////////////// GenieArduino-BETA 27/05/2021 ///////////////////////
 //
 //      Library to utilise the 4D Systems Genie interface to displays
 //      that have been created using the Visi-Genie creator platform.
 //      This is intended to be used with the Arduino platform.
 //
 //      Improvements/Updates by
+//        4D Systems Engineering, May 2021, www.4dsystems.com.au
 //        4D Systems Engineering, August 2020, www.4dsystems.com.au
 //        4D Systems Engineering, July 2020, www.4dsystems.com.au
 //        4D Systems Engineering, August 2017, www.4dsystems.com.au
@@ -25,7 +26,7 @@
 //      Based on code by
 //        Gordon Henderson, February 2013, <projects@drogon.net>
 //
-//      Copyright (c) 2012-2020 4D Systems Pty Ltd, Sydney, Australia
+//      Copyright (c) 2012-2021 4D Systems Pty Ltd, Sydney, Australia
 /*********************************************************************
  * This file is part of genieArduino:
  *    genieArduino is free software: you can redistribute it and/or modify
@@ -804,8 +805,6 @@ uint8_t Genie::WriteStr (uint8_t index, int n, int base) {
 uint8_t Genie::WriteStr (uint8_t index, unsigned long n) {
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
-//  long N = n; // unused?
-  n = abs(n);
   *str = '\0';
   do {
     unsigned long m = n;
@@ -1040,8 +1039,6 @@ uint8_t Genie::WriteInhLabel (uint8_t index, int n, int base) {
 uint8_t Genie::WriteInhLabel (uint8_t index, unsigned long n) {
   char buf[8 * sizeof(long) + 1]; // Assumes 8-bit chars plus zero byte.
   char *str = &buf[sizeof(buf) - 1];
-//  long N = n; // unused?
-  n = abs(n);
   *str = '\0';
   do {
     unsigned long m = n;
